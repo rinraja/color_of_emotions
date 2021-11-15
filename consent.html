@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Informed Consent</title>
+    <style type="text/css">
+      .btn {
+        background-color: white;
+        border: 1px solid grey;
+        color:black;
+        padding: 15px 15px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 20px;
+        cursor: pointer;
+        width: 200px;
+        margin-inline: 48px;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="consent">
+      <p style="font: size 40px;">
+        Please carefully read over the Consent form below. To continue, click the checkbox below and hit "Start Experiment".
+      </p>
+      <iframe src="consent_form.pdf" width="1250px" height="750px">
+      </iframe>
+      <p>
+        <input class="container", type="checkbox",  id="consent_checkbox"/>
+          I agree to take part in this study.
+      </p>
+      <button class="btn", type="button",   id="start">
+          Start Experiment
+      </button>
+      <p>
+
+      </p>
+    </div>
+  </body>
+</html>

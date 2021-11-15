@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Color of Emotions</title>
+    <script src="https://unpkg.com/jspsych@7.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-button-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-instructions-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-canvas-keyboard-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-canvas-button-response@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-resize@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-external-html@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.0.0"></script>
+    <link href="https://unpkg.com/jspsych@7.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+    
+    <style>
+      body{
+        background-color: lightgrey;
+      }
+      .jspsych-btn {
+        background-color: white;
+        border: 1px solid grey;
+        color:black;
+        padding: 20px 20px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 20px;
+        cursor: pointer;
+        width: 140px;
+        margin-inline: 48px;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body></body>
+  <script>
+      /* initialize jsPsych */
+      var jsPsych = initJsPsych({
+        on_finish: function() {
+          var finData = jsPsych.data.get().filterCustom(function(trial) {
+              return (trial.trial_type == "canvas-button-response");
+          });
+          finData.localSave('csv', 'fin_data.csv');
+        },
+        show_progress_bar: true
+      });
+
+      /* create timeline */
+      var timeline = [];
+
+      /* define welcome statement */
+      var welcome = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: `<p style="font-size:30px"> Welcome to the Color of Emotions experiment!</p> 
+        <p style="font-size:25px"> Press any key to begin.</p>`
+      }
+      timeline.push(welcome);
+
+      /* start fullscreen mode 
+      var fullscreen_trial = {
+        type: jsPsychFullscreen,
+        fullscreen_mode: true,
+        button_label: 'Start'
+      };
+      timeline.push(fullscreen_trial)
+      */
+
+      /* resize in order to ensure users have the same screen dimensions */
+      var inputs = {
+        type: jsPsychResize,
+        item_width: 3 + 3/8,
+        item_height: 2 + 1/8,
+        prompt: "<p style='font-size:25px'>Click and drag the lower right corner of the box until the box is the same size as a credit card held up to the screen.</p>",
+        pixels_per_unit: 150
+      };
+      timeline.push(inputs);
+      
+      /* define consent form */
+      var consent = {
+        type: jsPsychExternalHtml,
+        url: './consent.html',
+        cont_btn: "start",
+        check_fn: function(){
+          if (document.getElementById('consent_checkbox').checked) {
+          return true;
+          }
+          else {
+           alert("If you wish to participate, you must check the box next to the statement 'I agree to participate in this study.'");
+          }
+        }
+      };
+      timeline.push(consent);
+
+      /* define instructions before survey */
+      var instructions = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: ` 
+          <p style="font-size:30px">You will be looking at two different colored squares and a word.</p>
+          <p style="font-size:30px">Choose the color that you believe best fits the given emotion.</p>
+          <p style="font-size:30px">We will begin with some examples.</p>
+          <p style="font-size:25px">Press any key to continue.</p>
+        ` 
+      }; 
+      timeline.push(instructions);
+
+      /* defines training before experiment begins */
+      var training = {
+        timeline: [ 
+        {
+            type: jsPsychCanvasButtonResponse,
+            stimulus: function(r) {
+              twoRect(r, 'green', 'blue');   
+            },
+            canvas_size: [225, 500],
+            choices: ['Green', 'Blue'],
+            button_html: '<button class="jspsych-btn">%choice%</button>',
+            prompt: `
+              <p style="font-size:25px">What color is the best match for <strong>Celery</strong>?</p>
+              <p style="font-size:25px">You will see the word appearing at the bottom of your screen like what is shown above. Below the word you will see two color options. </p>
+              <p style="font-size:25px">You can select the color that you think best describes the word either by clicking on the button underneath the color square. Once you make your selection, the page will advance to the next trial. Let’s go through a couple of examples.</p>
+              <p style="font-size:23px">Press one of the buttons to continue.</p>
+            `
+          }
+        ]
+      };
+      timeline.push(training);
+
+      /* defines pratice trial before experiment begins */
+      var practice_1 = {
+        timeline: [ 
+        {
+            type: jsPsychCanvasButtonResponse,
+            stimulus: function(r) {
+              twoRect(r, 'purple', 'yellow');   
+            },
+            canvas_size: [225, 500],
+            choices: ['Purple', 'Yellow'],
+            button_html: '<button class="jspsych-btn">%choice%</button>',
+            prompt: `
+              <p style="font-size:25px">What color is the best match for <strong>Banana</strong>?</p>
+            `
+          }
+        ]
+      };
+      timeline.push(practice_1);
+
+      var practice_2 = {
+        timeline: [ 
+        {
+            type: jsPsychCanvasButtonResponse,
+            stimulus: function(r) {
+              twoRect(r, 'red', 'white');   
+            },
+            canvas_size: [225, 500],
+            choices: ['Red', 'White'],
+            button_html: '<button class="jspsych-btn">%choice%</button>',
+            prompt: `
+              <p style="font-size:25px">What color is the best match for <strong>Tomato</strong>?</p>
+            `
+          }
+        ]
+      };
+      timeline.push(practice_2);
+
+      var practice_3 = {
+        timeline: [ 
+        {
+            type: jsPsychCanvasButtonResponse,
+            stimulus: function(r) {
+              twoRect(r, 'green', 'purple');   
+            },
+            canvas_size: [225, 500],
+            choices: ['Green', 'Purple'],
+            button_html: '<button class="jspsych-btn">%choice%</button>',
+            prompt: `
+              <p style="font-size:25px">Sometimes, the color that best describe the word may not be intuitive. When this happens, we ask you to go with what color you think best describes the word. </p>
+              <p style="font-size:25px">What color is the best match for <strong>Grapes</strong>?</p>
+            `
+          }
+        ]
+      };
+      timeline.push(practice_3);
+      
+      /* define survey statistics before starting */
+      var overview = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: ` 
+          <p style="font-size:28px">You can take as long as you want to make your selection.</p>
+          <p style="font-size:28px">There will be XXX trials in this experiment, and the experiment should take approximately XX minutes.</p>
+          <p style="font-size:28px">We have embedded X breaks throughout the experiment. You will also see your progress bar on top of the screen.</p>
+          <p style="font-size:25px">Press any key to begin the experiement.</p>
+        ` 
+      }; 
+      timeline.push(overview);
+
+      /* 3.25 cm wide × 4.25 cm tall and were viewed from a distance of approximately 60 cm */
+      /* In pixels it is 122.83464567, 160.62992126 */
+
+      function twoRect(r, color1, color2){
+        var rtx = r.getContext('2d');
+        rtx.fillStyle = 'black';
+        /* Draws black border around left square*/
+        rtx.fillRect(46, 26, 168.62992126, 168.62992126);
+        rtx.fillStyle = color1;
+        rtx.fillRect(50, 30, 160.62992126, 160.62992126);
+        rtx.fillStyle = 'black';
+        /* Draws black border around right square*/
+        rtx.fillRect(296, 26, 168.62992126, 168.62992126);
+        rtx.fillStyle = color2;
+        rtx.fillRect(300, 30, 160.62992126, 160.62992126);
+      }
+
+      var fixation = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '<div style="font-size:60px;">+</div>',
+        choices: "NO_KEYS",
+        trial_duration: 1000,
+      };
+
+      //
+      //  NEED TO FIX THE DATA COLLECTION FOR WHICH 
+      //  BUTTON THE USER PICKS!!!!!!!!
+      //
+      
+      /*  NEED TO CREATE ALL POSSIBLE COMBINATIONS OF    COLORS, EMOTIONS, AND NAMES  */
+      var trial = {
+        timeline: [fixation, 
+        {
+            type: jsPsychCanvasButtonResponse,
+            stimulus: function(r) {
+              twoRect(r, jsPsych.timelineVariable('color1'), jsPsych.timelineVariable('color2'));   
+            },
+            canvas_size: [225, 500],
+            choices: [jsPsych.timelineVariable('left'), jsPsych.timelineVariable('right')],
+            button_html: '<button class="jspsych-btn">%choice%</button>',
+            prompt: function(){
+              var emotion = jsPsych.timelineVariable('emotion');
+              var question = 'What color is the best match for ' + emotion + '?'
+              question.fontsize(25);
+              return question
+            }, 
+            /*
+            `
+              <p style="font-size:25px">What color is the best match for <strong>Anger</strong>?</p>
+            `,
+            */
+            data: {
+              color1: jsPsych.timelineVariable('left'),
+              color2: jsPsych.timelineVariable('right'),
+              emotion: jsPsych.timelineVariable('emotion')
+            }
+          }
+        ],
+        timeline_variables: [
+            {color1: '#FFFF54', color2: '#54FF54', left: 'Yellow', right: 'Light Green', emotion: 'Anger'},
+            {color1: '#009600', color2: '#FF54FF', left: 'Dark Green', right: 'Pink', emotion: 'Happy'},
+            {color1: '#59BDFF', color2: '#5151FF', left: 'Light Blue', right: 'Dark Blue', emotion: 'Sadness'}
+        ],
+        randomize_order: true
+    };
+    timeline.push(trial);
+
+    jsPsych.run(timeline);
+  </script>
+</html>
