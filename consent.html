@@ -12,7 +12,8 @@
         text-decoration: none;
         font-size: 20px;
         cursor: pointer;
-        width: 200px;
+        margin-bottom: 20px;
+        width: 250px;
         margin-inline: 48px;
         vertical-align: middle;
       }
@@ -20,6 +21,7 @@
   </head>
   <body>
     <div id="consent">
+      <br>
       <p style="font: size 40px;">
         Please carefully read over the Consent form below. To continue, click the checkbox below and hit "Start Experiment".
       </p>
@@ -27,13 +29,14 @@
       </iframe>
       <p>
         <input class="container", type="checkbox",  id="consent_checkbox"/>
-          I agree to take part in this study.
+          I agree to participate in this study.
       </p>
-      <button class="btn", type="button",   id="start">
-          Start Experiment
-      </button>
       <p>
-
+        <input class="container", type="checkbox",  id="no_checkbox"/>
+          I do not want to participate in this study.
+      </p>
+      <p>
+        <button type="button" class="btn" id="start">Continue</button>
       </p>
     </div>
   </body>

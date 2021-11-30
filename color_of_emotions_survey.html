@@ -33,6 +33,19 @@
         margin-inline: 48px;
         vertical-align: middle;
       }
+      .resize-btn {
+        background-color: white;
+        border: 1px solid grey;
+        color:black;
+        padding: 100px 100px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 20px;
+        cursor: pointer;
+        width: 300px;
+        margin-inline: 48px;
+        vertical-align: middle;
+      }
     </style>
   </head>
   <body></body>
@@ -73,7 +86,8 @@
         type: jsPsychResize,
         item_width: 3 + 3/8,
         item_height: 2 + 1/8,
-        prompt: "<p style='font-size:25px'>Click and drag the lower right corner of the box until the box is the same size as a credit card held up to the screen.</p>",
+        prompt: "<p style='font-size:25px class=''>Click and drag the lower right corner of the box until the box is the same size as a credit card held up to the screen.</p>",
+        button_label: "The box above has been adjusted to be the same size as a credit card",
         pixels_per_unit: 150
       };
       timeline.push(inputs);
@@ -85,11 +99,17 @@
         cont_btn: "start",
         check_fn: function(){
           if (document.getElementById('consent_checkbox').checked) {
-          return true;
+            return true;
+          }
+          else if (document.getElementById('no_checkbox').checked){
+            jsPsych.endExperiment('The experiment was ended. This is the end message.');
+            return true;
           }
           else {
-           alert("If you wish to participate, you must check the box next to the statement 'I agree to participate in this study.'");
+           alert("If you wish to participate, you must check the box next to the statement: 'I agree to participate in this study.'" + '\n' + "To leave the survey you need to check the box next to the statement: 'I do not want to participate in this study'");
+           return false;
           }
+          return false;
         }
       };
       timeline.push(consent);
@@ -115,7 +135,7 @@
               twoRect(r, 'green', 'blue');   
             },
             canvas_size: [225, 500],
-            choices: ['Green', 'Blue'],
+            choices: ['↑', '↑'],
             button_html: '<button class="jspsych-btn">%choice%</button>',
             prompt: `
               <p style="font-size:25px">What color is the best match for <strong>Celery</strong>?</p>
@@ -137,7 +157,7 @@
               twoRect(r, 'purple', 'yellow');   
             },
             canvas_size: [225, 500],
-            choices: ['Purple', 'Yellow'],
+            choices: ['↑', '↑'],
             button_html: '<button class="jspsych-btn">%choice%</button>',
             prompt: `
               <p style="font-size:25px">What color is the best match for <strong>Banana</strong>?</p>
@@ -155,7 +175,7 @@
               twoRect(r, 'red', 'white');   
             },
             canvas_size: [225, 500],
-            choices: ['Red', 'White'],
+            choices: ['↑', '↑'],
             button_html: '<button class="jspsych-btn">%choice%</button>',
             prompt: `
               <p style="font-size:25px">What color is the best match for <strong>Tomato</strong>?</p>
@@ -173,7 +193,7 @@
               twoRect(r, 'green', 'purple');   
             },
             canvas_size: [225, 500],
-            choices: ['Green', 'Purple'],
+            choices: ['↑', '↑'],
             button_html: '<button class="jspsych-btn">%choice%</button>',
             prompt: `
               <p style="font-size:25px">Sometimes, the color that best describe the word may not be intuitive. When this happens, we ask you to go with what color you think best describes the word. </p>
@@ -225,7 +245,7 @@
       //  BUTTON THE USER PICKS!!!!!!!!
       //
       
-      /*  NEED TO CREATE ALL POSSIBLE COMBINATIONS OF    COLORS, EMOTIONS, AND NAMES  */
+      /*  NEED TO CREATE ALL POSSIBLE COMBINATIONS OF COLORS, EMOTIONS, AND NAMES  */
       var trial = {
         timeline: [fixation, 
         {
@@ -234,7 +254,7 @@
               twoRect(r, jsPsych.timelineVariable('color1'), jsPsych.timelineVariable('color2'));   
             },
             canvas_size: [225, 500],
-            choices: [jsPsych.timelineVariable('left'), jsPsych.timelineVariable('right')],
+            choices: ['↑', '↑'],
             button_html: '<button class="jspsych-btn">%choice%</button>',
             prompt: function(){
               var emotion = jsPsych.timelineVariable('emotion');
@@ -255,9 +275,9 @@
           }
         ],
         timeline_variables: [
-            {color1: '#FFFF54', color2: '#54FF54', left: 'Yellow', right: 'Light Green', emotion: 'Anger'},
-            {color1: '#009600', color2: '#FF54FF', left: 'Dark Green', right: 'Pink', emotion: 'Happy'},
-            {color1: '#59BDFF', color2: '#5151FF', left: 'Light Blue', right: 'Dark Blue', emotion: 'Sadness'}
+            {color1: '#FFFF54', color2: '#54FF54', emotion: 'Anger'},
+            {color1: '#009600', color2: '#FF54FF',emotion: 'Happy'},
+            {color1: '#59BDFF', color2: '#5151FF', emotion: 'Sadness'}
         ],
         randomize_order: true
     };
