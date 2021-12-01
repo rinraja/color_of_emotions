@@ -20,6 +20,7 @@
       body{
         background-color: lightgrey;
       }
+      /* general button */
       .jspsych-btn {
         background-color: white;
         border: 1px solid grey;
@@ -33,6 +34,7 @@
         margin-inline: 48px;
         vertical-align: middle;
       }
+      /* consent buttons */
       .resize-btn {
         background-color: white;
         border: 1px solid grey;
@@ -43,6 +45,20 @@
         font-size: 20px;
         cursor: pointer;
         width: 300px;
+        margin-inline: 48px;
+        vertical-align: middle;
+      }
+      /* left and right buttons */
+      .choice-btn{
+        background-color: white;
+        border: 1px solid grey;
+        color:black;
+        padding: 20px 20px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 25px;
+        cursor: pointer;
+        width: 140px;
         margin-inline: 48px;
         vertical-align: middle;
       }
@@ -86,7 +102,7 @@
         type: jsPsychResize,
         item_width: 3 + 3/8,
         item_height: 2 + 1/8,
-        prompt: "<p style='font-size:25px class=''>Click and drag the lower right corner of the box until the box is the same size as a credit card held up to the screen.</p>",
+        prompt: "<p style='font-size:30px class=''>Click and drag the lower right corner of the box until the box is the same size as a credit card held up to the screen.</p>",
         button_label: "The box above has been adjusted to be the same size as a credit card",
         pixels_per_unit: 150
       };
@@ -105,6 +121,7 @@
             jsPsych.endExperiment('The experiment was ended. This is the end message.');
             return true;
           }
+          /* ensures that user signs consent before starting experiment*/
           else {
            alert("If you wish to participate, you must check the box next to the statement: 'I agree to participate in this study.'" + '\n' + "To leave the survey you need to check the box next to the statement: 'I do not want to participate in this study'");
            return false;
@@ -117,36 +134,58 @@
       /* define instructions before survey */
       var instructions = {
         type: jsPsychHtmlKeyboardResponse,
-        stimulus: ` 
-          <p style="font-size:30px">You will be looking at two different colored squares and a word.</p>
+        stimulus:  
+          `<p style="font-size:30px">You will be looking at two different colored squares and a word.</p>
           <p style="font-size:30px">Choose the color that you believe best fits the given emotion.</p>
           <p style="font-size:30px">We will begin with some examples.</p>
-          <p style="font-size:25px">Press any key to continue.</p>
-        ` 
+          <p style="font-size:25px">Press any key to continue.</p>`   
       }; 
       timeline.push(instructions);
 
       /* defines training before experiment begins */
       var training = {
-        timeline: [ 
-        {
+        /*timeline: [ 
+        {*/
             type: jsPsychCanvasButtonResponse,
             stimulus: function(r) {
               twoRect(r, 'green', 'blue');   
             },
             canvas_size: [225, 500],
-            choices: ['↑', '↑'],
-            button_html: '<button class="jspsych-btn">%choice%</button>',
-            prompt: `
-              <p style="font-size:25px">What color is the best match for <strong>Celery</strong>?</p>
-              <p style="font-size:25px">You will see the word appearing at the bottom of your screen like what is shown above. Below the word you will see two color options. </p>
-              <p style="font-size:25px">You can select the color that you think best describes the word either by clicking on the button underneath the color square. Once you make your selection, the page will advance to the next trial. Let’s go through a couple of examples.</p>
-              <p style="font-size:23px">Press one of the buttons to continue.</p>
-            `
-          }
-        ]
+            choices: ['Left', 'Right'],
+            button_html: '<button class="choice-btn">%choice%</button>',
+            prompt: 
+              `<p style="font-size:25px">What color is the best match for <strong>Celery</strong>?</p>
+              <p style="font-size:25px">You will see two color options in the middle of the page and the word with be displayed below the buttons.  </p>
+              <p style="font-size:25px">You can select the color that you think best describes the word by clicking on the button underneath the color square. Once you make your selection, the page will advance to the next trial. Let’s go through a couple of examples.</p>
+              <p style="font-size:23px">Press one of the buttons to continue.</p>`,
+              data:{
+                color_left: 'green',
+                color_right: 'blue'
+              },
+              on_finish: function(data){
+               if(jsPsych.pluginAPI.compareKeys(data.response, "Left")){
+                  return "<p>Correct! Celery is typically associated with the color green!</p>";
+               } else {
+                  return "<p>Are you sure about that? What kind of celery is blue?</p>";  
+               }
+              }
+          //}
+        //]
       };
       timeline.push(training);
+
+      var feedback_1 = {
+        type: jsPsychCanvasButtonResponse,
+        stimulus: function(){
+          var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+          if(last_trial_correct){
+            return "<p>Correct! Celery is typically associated with the color green!</p>";
+          } else {
+            return "<p>Are you sure about that? What kind of celery is blue?</p>"; 
+          }
+        }
+      }
+      //timeline.push(training, feedback_1);
 
       /* defines pratice trial before experiment begins */
       var practice_1 = {
@@ -157,8 +196,8 @@
               twoRect(r, 'purple', 'yellow');   
             },
             canvas_size: [225, 500],
-            choices: ['↑', '↑'],
-            button_html: '<button class="jspsych-btn">%choice%</button>',
+            choices: ['Left', 'Right'],
+            button_html: '<button class="choice-btn">%choice%</button>',
             prompt: `
               <p style="font-size:25px">What color is the best match for <strong>Banana</strong>?</p>
             `
@@ -175,8 +214,8 @@
               twoRect(r, 'red', 'white');   
             },
             canvas_size: [225, 500],
-            choices: ['↑', '↑'],
-            button_html: '<button class="jspsych-btn">%choice%</button>',
+            choices: ['Left', 'Right'],
+            button_html: '<button class="choice-btn">%choice%</button>',
             prompt: `
               <p style="font-size:25px">What color is the best match for <strong>Tomato</strong>?</p>
             `
@@ -193,8 +232,8 @@
               twoRect(r, 'green', 'purple');   
             },
             canvas_size: [225, 500],
-            choices: ['↑', '↑'],
-            button_html: '<button class="jspsych-btn">%choice%</button>',
+            choices: ['Left', 'Right'],
+            button_html: '<button class="choice-btn">%choice%</button>',
             prompt: `
               <p style="font-size:25px">Sometimes, the color that best describe the word may not be intuitive. When this happens, we ask you to go with what color you think best describes the word. </p>
               <p style="font-size:25px">What color is the best match for <strong>Grapes</strong>?</p>
@@ -254,13 +293,13 @@
               twoRect(r, jsPsych.timelineVariable('color1'), jsPsych.timelineVariable('color2'));   
             },
             canvas_size: [225, 500],
-            choices: ['↑', '↑'],
-            button_html: '<button class="jspsych-btn">%choice%</button>',
+            choices: ['Left', 'Right'],
+            button_html: '<button class="choice-btn">%choice%</button>',
             prompt: function(){
               var emotion = jsPsych.timelineVariable('emotion');
-              var question = 'What color is the best match for ' + emotion + '?'
+              var question = 'What color is the best match for ' + emotion + '?';
               question.fontsize(25);
-              return question
+              return question;
             }, 
             /*
             `
